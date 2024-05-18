@@ -20,11 +20,15 @@ import { UnprocessedEntitiesModule } from '@backstage/plugin-catalog-backend-mod
 import { Router } from 'express';
 import { PluginEnvironment } from '../types';
 import { DemoEventBasedEntityProvider } from './DemoEventBasedEntityProvider';
+import { AzureBlobStorageEntityProvider } from '@backstage/plugin-catalog-backend-module-azure';
+import { Duration } from 'luxon';
 
 export default async function createPlugin(
   env: PluginEnvironment,
 ): Promise<Router> {
   const builder = CatalogBuilder.create(env);
+  console.log('gwgergKJRHQWI4HRIU3HRI', env.config);
+
   builder.addProcessor(new ScaffolderEntitiesProcessor());
 
   const demoProvider = new DemoEventBasedEntityProvider({
@@ -33,8 +37,16 @@ export default async function createPlugin(
     topics: ['example'],
   });
   await demoProvider.subscribe();
-  builder.addEntityProvider(demoProvider);
-
+  // builder.addEntityProvider(demoProvider);
+  builder.addEntityProvider(
+    ...AzureBlobStorageEntityProvider.fromConfig(env.config, {
+      logger: env.logger,
+      schedule: env.scheduler.createScheduledTaskRunner({
+        frequency: Duration.fromObject({ minutes: 30 }),
+        timeout: Duration.fromObject({ minutes: 3 }),
+      }),
+    }),
+  );
   const { processingEngine, router } = await builder.build();
 
   const unprocessed = UnprocessedEntitiesModule.create({

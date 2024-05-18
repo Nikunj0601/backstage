@@ -13,13 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/**
- * A Backstage catalog backend module that helps integrate towards Azure
- *
- * @packageDocumentation
- */
-
-export { AzureDevOpsDiscoveryProcessor } from './processors';
-export { AzureDevOpsEntityProvider } from './providers';
-export { AzureBlobStorageEntityProvider } from './providers';
+export { AzureBlobStorageIntergation } from './AzureBlobStorageIntegration';
+export {
+  readAzureBlobStorageIntegrationConfig,
+  readAzureBlobStorageIntegrationConfigs,
+} from './config';
+export type { AzureBlobStorageIntegrationConfig } from './config';

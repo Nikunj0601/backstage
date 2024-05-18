@@ -49,6 +49,8 @@
     "test": "backstage-cli package test"
   },
   "dependencies": {
+    "@azure/identity": "^4.2.0",
+    "@azure/storage-blob": "^12.18.0",
     "@backstage/backend-common": "workspace:^",
     "@backstage/backend-plugin-api": "workspace:^",
     "@backstage/backend-tasks": "workspace:^",

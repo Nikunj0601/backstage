@@ -26,3 +26,9 @@ export type AzureDevOpsConfig = {
   path: string;
   schedule?: TaskScheduleDefinition;
 };
+
+export type AzureBlobStorageConfig = {
+  id: string;
+  containerName: string;
+  schedule?: TaskScheduleDefinition;
+};

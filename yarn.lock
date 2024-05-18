@@ -1616,9 +1616,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@azure/identity@npm:^4.0.0":
-  version: 4.1.0
-  resolution: "@azure/identity@npm:4.1.0"
+"@azure/identity@npm:^4.0.0, @azure/identity@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "@azure/identity@npm:4.2.0"
   dependencies:
     "@azure/abort-controller": ^1.0.0
     "@azure/core-auth": ^1.5.0
@@ -1634,7 +1634,7 @@ __metadata:
     open: ^8.0.0
     stoppable: ^1.1.0
     tslib: ^2.2.0
-  checksum: ff46494c7a7fdc866406f0e7938e7621c9ee0e852af2faad7ecf53d62a45b1528150f9c8b13a0fdd846995943025fbcbc88f2582b107cd5afac1511c28252377
+  checksum: b1b336113c944abf89376f366bf8e82958617465c91e561e922c165a10aaa1789e83a78b7baa070671247d0f97c63b4cc89cf6cabc72258f3d9cbe12fe799e2a
   languageName: node
   linkType: hard
 
@@ -1674,9 +1674,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@azure/storage-blob@npm:^12.5.0":
-  version: 12.17.0
-  resolution: "@azure/storage-blob@npm:12.17.0"
+"@azure/storage-blob@npm:^12.18.0, @azure/storage-blob@npm:^12.5.0":
+  version: 12.18.0
+  resolution: "@azure/storage-blob@npm:12.18.0"
   dependencies:
     "@azure/abort-controller": ^1.0.0
     "@azure/core-http": ^3.0.0
@@ -1686,7 +1686,7 @@ __metadata:
     "@azure/logger": ^1.0.0
     events: ^3.0.0
     tslib: ^2.2.0
-  checksum: 2e5d3f26577f698498bba7ff7b7cfeb942709a713d9c72864b80633bee28e2b369370afc55f18e49ccc02b4dad9d1de3a4602caa99dce1f8d8196c8472a8add1
+  checksum: 57806b12d89fef90d679a1626f0f6e80b411ac7c587508ac6c39c663ae40357c1f42ffebe5df15d5c46b13d150428bf742e93a8993487ed9c824872593575c2d
   languageName: node
   linkType: hard
 
@@ -4988,7 +4988,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@backstage/plugin-catalog-backend-module-aws@workspace:plugins/catalog-backend-module-aws":
+"@backstage/plugin-catalog-backend-module-aws@workspace:^, @backstage/plugin-catalog-backend-module-aws@workspace:plugins/catalog-backend-module-aws":
   version: 0.0.0-use.local
   resolution: "@backstage/plugin-catalog-backend-module-aws@workspace:plugins/catalog-backend-module-aws"
   dependencies:
@@ -5022,10 +5022,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@backstage/plugin-catalog-backend-module-azure@workspace:plugins/catalog-backend-module-azure":
+"@backstage/plugin-catalog-backend-module-azure@workspace:^, @backstage/plugin-catalog-backend-module-azure@workspace:plugins/catalog-backend-module-azure":
   version: 0.0.0-use.local
   resolution: "@backstage/plugin-catalog-backend-module-azure@workspace:plugins/catalog-backend-module-azure"
   dependencies:
+    "@azure/identity": ^4.2.0
+    "@azure/storage-blob": ^12.18.0
     "@backstage/backend-common": "workspace:^"
     "@backstage/backend-plugin-api": "workspace:^"
     "@backstage/backend-tasks": "workspace:^"
@@ -25753,6 +25755,7 @@ __metadata:
     "@backstage/plugin-auth-backend": "workspace:^"
     "@backstage/plugin-auth-node": "workspace:^"
     "@backstage/plugin-catalog-backend": "workspace:^"
+    "@backstage/plugin-catalog-backend-module-azure": "workspace:^"
     "@backstage/plugin-catalog-backend-module-scaffolder-entity-model": "workspace:^"
     "@backstage/plugin-catalog-backend-module-unprocessed": "workspace:^"
     "@backstage/plugin-catalog-node": "workspace:^"
@@ -25815,6 +25818,8 @@ __metadata:
     "@backstage/plugin-auth-backend-module-guest-provider": "workspace:^"
     "@backstage/plugin-auth-node": "workspace:^"
     "@backstage/plugin-catalog-backend": "workspace:^"
+    "@backstage/plugin-catalog-backend-module-aws": "workspace:^"
+    "@backstage/plugin-catalog-backend-module-azure": "workspace:^"
     "@backstage/plugin-catalog-backend-module-backstage-openapi": "workspace:^"
     "@backstage/plugin-catalog-backend-module-openapi": "workspace:^"
     "@backstage/plugin-catalog-backend-module-scaffolder-entity-model": "workspace:^"

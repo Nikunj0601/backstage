@@ -16,7 +16,7 @@
 
 import { readTaskScheduleDefinitionFromConfig } from '@backstage/backend-tasks';
 import { Config } from '@backstage/config';
-import { AzureDevOpsConfig } from './types';
+import { AzureDevOpsConfig, AzureBlobStorageConfig } from './types';
 
 export function readAzureDevOpsConfigs(config: Config): AzureDevOpsConfig[] {
   const configs: AzureDevOpsConfig[] = [];
@@ -56,6 +56,43 @@ function readAzureDevOpsConfig(id: string, config: Config): AzureDevOpsConfig {
     repository,
     branch,
     path,
+    schedule,
+  };
+}
+
+export function readAzureBlobStorageConfigs(
+  config: Config,
+): AzureBlobStorageConfig[] {
+  const configs: AzureBlobStorageConfig[] = [];
+
+  const providerConfigs = config.getOptionalConfig(
+    'catalog.providers.azureBlob',
+  );
+
+  if (!providerConfigs) {
+    return configs;
+  }
+
+  for (const id of providerConfigs.keys()) {
+    configs.push(readAzureBlobStorageConfig(id, providerConfigs.getConfig(id)));
+  }
+
+  return configs;
+}
+
+function readAzureBlobStorageConfig(
+  id: string,
+  config: Config,
+): AzureBlobStorageConfig {
+  const containerName = config.getString('container');
+
+  const schedule = config.has('schedule')
+    ? readTaskScheduleDefinitionFromConfig(config.getConfig('schedule'))
+    : undefined;
+
+  return {
+    id,
+    containerName,
     schedule,
   };
 }

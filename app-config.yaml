@@ -224,6 +224,11 @@ integrations:
   azure:
     - host: dev.azure.com
       token: ${AZURE_TOKEN}
+
+  azureBlobStorage:
+    - host: dev.azure.com
+      accountName: ${ACCOUNT_NAME}
+      accountKey: ${ACCOUNT_KEY}
   #  googleGcs:
   #    clientEmail: 'example@example.com'
   #    privateKey: ${GCS_PRIVATE_KEY}
@@ -245,6 +250,8 @@ catalog:
         - Domain
         - Location
   providers:
+    azureBlob:
+      containerName: catalog
     backstageOpenapi:
       plugins:
         - catalog
@@ -284,27 +291,27 @@ catalog:
     # backend, for example packages/backend/.
 
     # Backstage example entities
-    - type: file
-      target: ../catalog-model/examples/all.yaml
-    # Backstage example groups and users
-    - type: file
-      target: ../catalog-model/examples/acme-corp.yaml
-      rules:
-        - allow: [User, Group]
-    # Example component for github-actions and TechDocs
-    - type: file
-      target: ../../plugins/github-actions/examples/sample.yaml
-    # Example component for TechDocs
-    - type: file
-      target: ../../plugins/techdocs-backend/examples/documented-component/catalog-info.yaml
-    # Example component for ADRs
-    - type: file
-      target: ../../plugins/adr/examples/component/catalog-info.yaml
-    # Backstage example templates
-    - type: file
-      target: ../../plugins/scaffolder-backend/sample-templates/all-templates.yaml
-      rules:
-        - allow: [Template]
+    # - type: file
+    #   target: ../catalog-model/examples/all.yaml
+    # # Backstage example groups and users
+    # - type: file
+    #   target: ../catalog-model/examples/acme-corp.yaml
+    #   rules:
+    #     - allow: [User, Group]
+    # # Example component for github-actions and TechDocs
+    # - type: file
+    #   target: ../../plugins/github-actions/examples/sample.yaml
+    # # Example component for TechDocs
+    # - type: file
+    #   target: ../../plugins/techdocs-backend/examples/documented-component/catalog-info.yaml
+    # # Example component for ADRs
+    # - type: file
+    #   target: ../../plugins/adr/examples/component/catalog-info.yaml
+    # # Backstage example templates
+    # - type: file
+    #   target: ../../plugins/scaffolder-backend/sample-templates/all-templates.yaml
+      # rules:
+      #   - allow: [Template]
 scaffolder:
   # Use to customize default commit author info used when new components are created
   # defaultAuthor:
@@ -336,7 +343,6 @@ auth:
       development:
         clientId: ${AUTH_GITHUB_CLIENT_ID}
         clientSecret: ${AUTH_GITHUB_CLIENT_SECRET}
-        enterpriseInstanceUrl: ${AUTH_GITHUB_ENTERPRISE_INSTANCE_URL}
     gitlab:
       development:
         clientId: ${AUTH_GITLAB_CLIENT_ID}
