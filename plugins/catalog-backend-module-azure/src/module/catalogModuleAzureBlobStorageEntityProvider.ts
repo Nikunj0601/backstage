@@ -19,19 +19,11 @@ import {
   createBackendModule,
 } from '@backstage/backend-plugin-api';
 import { catalogProcessingExtensionPoint } from '@backstage/plugin-catalog-node/alpha';
-import {
-  AzureBlobStorageEntityProvider,
-  AzureDevOpsEntityProvider,
-} from '../providers';
+import { AzureBlobStorageEntityProvider } from '../providers';
 
-/**
- * Registers the AzureDevOpsEntityProvider with the catalog processing extension point.
- *
- * @alpha
- */
-export const catalogModuleAzureEntityProvider = createBackendModule({
+export const catalogModuleAzureBlobStorageEntityProvider = createBackendModule({
   pluginId: 'catalog',
-  moduleId: 'azure-providers',
+  moduleId: 'azure-blob-storage-entity-provider',
   register(env) {
     env.registerInit({
       deps: {
@@ -41,25 +33,12 @@ export const catalogModuleAzureEntityProvider = createBackendModule({
         scheduler: coreServices.scheduler,
       },
       async init({ config, catalog, logger, scheduler }) {
-        // Check for Azure Blob Storage provider configuration and register it
-        if (config.has('catalog.providers.azureBlob')) {
-          catalog.addEntityProvider(
-            AzureBlobStorageEntityProvider.fromConfig(config, {
-              logger,
-              scheduler,
-            }),
-          );
-        }
-
-        // Check for Azure DevOps provider configuration and register it
-        if (config.has('catalog.providers.azureDevOps')) {
-          catalog.addEntityProvider(
-            AzureDevOpsEntityProvider.fromConfig(config, {
-              logger,
-              scheduler,
-            }),
-          );
-        }
+        catalog.addEntityProvider(
+          AzureBlobStorageEntityProvider.fromConfig(config, {
+            logger,
+            scheduler,
+          }),
+        );
       },
     });
   },

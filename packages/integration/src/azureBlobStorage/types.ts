@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 The Backstage Authors
+ * Copyright 2024 The Backstage Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,5 +14,16 @@
  * limitations under the License.
  */
 
-export { catalogModuleAzureEntityProvider as default } from './catalogModuleAzureDevOpsEntityProvider';
-// export { catalogModuleAzureBlobStorageEntityProvider as default } from './catalogModuleAzureBlobStorageEntityProvider';
+import { TokenCredential } from '@azure/identity';
+import {
+  StorageSharedKeyCredential,
+  AnonymousCredential,
+} from '@azure/storage-blob';
+
+export interface AzureCredentialsManager {
+  getCredentials(
+    accountName: string,
+  ): Promise<
+    TokenCredential | StorageSharedKeyCredential | AnonymousCredential
+  >;
+}

@@ -15,6 +15,7 @@
  */
 
 import {
+  AnonymousCredential,
   BlobServiceClient,
   ContainerClient,
   StorageSharedKeyCredential,
@@ -30,11 +31,18 @@ import { LocationSpec } from '@backstage/plugin-catalog-common';
 import * as uuid from 'uuid';
 import { PluginTaskScheduler, TaskRunner } from '@backstage/backend-tasks';
 import { readAzureBlobStorageConfigs } from './config';
-import { ScmIntegrations } from '@backstage/integration';
-import { DefaultAzureCredential } from '@azure/identity';
+import {
+  AzureBlobStorageIntergation,
+  AzureDevOpsCredentialsProvider,
+  AzureIntegration,
+  DefaultAzureCredentialsManager,
+  DefaultAzureDevOpsCredentialsProvider,
+  ScmIntegrations,
+} from '@backstage/integration';
+import { DefaultAzureCredential, TokenCredential } from '@azure/identity';
 import { AzureBlobStorageConfig } from './types';
 // eslint-disable-next-line @backstage/no-forbidden-package-imports
-import { AzureBlobStorageIntergation } from '@backstage/integration/src/azureBlobStorage';
+// import { AzureBlobStorageIntergation } from '@backstage/integration/src/azureBlobStorage';
 
 export class AzureBlobStorageEntityProvider implements EntityProvider {
   private readonly logger: LoggerService;
@@ -52,23 +60,27 @@ export class AzureBlobStorageEntityProvider implements EntityProvider {
   ): AzureBlobStorageEntityProvider[] {
     const providerConfigs = readAzureBlobStorageConfigs(configRoot);
 
-    const integration =
-      ScmIntegrations.fromConfig(configRoot).azureBlobStorage.list()[0];
-    if (!integration) {
-      throw new Error('No integration found for azureBlobStorage');
-    }
-
+    const scmIntegration = ScmIntegrations.fromConfig(configRoot);
+    const credentialsProvider =
+      DefaultAzureCredentialsManager.fromIntegrations(scmIntegration);
     if (!options.schedule && !options.scheduler) {
       throw new Error('Either schedule or scheduler must be provided.');
     }
 
     return providerConfigs.map(providerConfig => {
-      if (!options.schedule && !providerConfig.schedule) {
+      const integration = scmIntegration.azureBlobStorage.list()[0];
+      if (!integration) {
         throw new Error(
-          `No schedule provided neither via code nor config for azureBlobStorage-provider:${providerConfig.id}.`,
+          `There is no Azure blob storage integration for host. Please add a configuration entry for it under integrations.azure`,
         );
       }
-      const azureCredentialsManager = new DefaultAzureCredential();
+
+      if (!options.schedule && !providerConfig.schedule) {
+        throw new Error(
+          `No schedule provided neither via code nor config for AzureBlobStorageEntityProvider:${providerConfig.id}.`,
+        );
+      }
+
       const taskRunner =
         options.schedule ??
         options.scheduler!.createScheduledTaskRunner(providerConfig.schedule!);
@@ -76,7 +88,7 @@ export class AzureBlobStorageEntityProvider implements EntityProvider {
       return new AzureBlobStorageEntityProvider(
         providerConfig,
         integration,
-        azureCredentialsManager,
+        credentialsProvider,
         options.logger,
         taskRunner,
       );
@@ -85,7 +97,7 @@ export class AzureBlobStorageEntityProvider implements EntityProvider {
   constructor(
     private readonly config: AzureBlobStorageConfig,
     private readonly integration: AzureBlobStorageIntergation,
-    private readonly azureCredentialsManager: DefaultAzureCredential,
+    private readonly credentialsProvider: DefaultAzureCredentialsManager,
     logger: LoggerService,
     schedule: TaskRunner,
   ) {
@@ -124,14 +136,24 @@ export class AzureBlobStorageEntityProvider implements EntityProvider {
 
   async connect(connection: EntityProviderConnection): Promise<void> {
     this.connection = connection;
+    let credential:
+      | TokenCredential
+      | StorageSharedKeyCredential
+      | AnonymousCredential;
+    if (this.integration.config.accountKey) {
+      credential = new StorageSharedKeyCredential(
+        this.integration.config.accountName as string,
+        this.integration.config.accountKey as string,
+      );
+    } else {
+      credential = await this.credentialsProvider.getCredentials(
+        this.integration.config.accountName as string,
+      );
+    }
 
-    const sharedKeyCredential = new StorageSharedKeyCredential(
-      this.integration.config.accountName as string,
-      this.integration.config.accountKey as string,
-    );
     this.blobServiceClient = new BlobServiceClient(
-      `https://${this.integration.config.accountName}.blob.core.windows.net`,
-      sharedKeyCredential,
+      `https://${this.integration.config.accountName}.${this.integration.config.host}`,
+      credential,
     );
     await this.scheduleFn();
   }
@@ -176,7 +198,6 @@ export class AzureBlobStorageEntityProvider implements EntityProvider {
         keys.push(blob.name);
       }
     }
-    console.log(keys);
 
     return keys;
   }
@@ -191,6 +212,6 @@ export class AzureBlobStorageEntityProvider implements EntityProvider {
 
   private createObjectUrl(key: string): string {
     const endpoint = this.blobServiceClient?.url;
-    return `${endpoint}/${this.config.containerName}/${key}`;
+    return `${endpoint}${this.config.containerName}/${key}`;
   }
 }

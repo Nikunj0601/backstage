@@ -18,7 +18,7 @@ import { TaskScheduleDefinition } from '@backstage/backend-tasks';
 import { mockServices, startTestBackend } from '@backstage/backend-test-utils';
 import { catalogProcessingExtensionPoint } from '@backstage/plugin-catalog-node/alpha';
 import { Duration } from 'luxon';
-import { catalogModuleAzureDevOpsEntityProvider } from './catalogModuleAzureDevOpsEntityProvider';
+import { catalogModuleAzureEntityProvider } from './catalogModuleAzureDevOpsEntityProvider';
 import { AzureDevOpsEntityProvider } from '../providers';
 
 describe('catalogModuleAzureDevOpsEntityProvider', () => {
@@ -59,7 +59,7 @@ describe('catalogModuleAzureDevOpsEntityProvider', () => {
     await startTestBackend({
       extensionPoints: [[catalogProcessingExtensionPoint, extensionPoint]],
       features: [
-        catalogModuleAzureDevOpsEntityProvider(),
+        catalogModuleAzureEntityProvider(),
         mockServices.rootConfig.factory({ data: config }),
         mockServices.logger.factory(),
         scheduler.factory,
